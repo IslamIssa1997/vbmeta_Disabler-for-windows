@@ -1,0 +1,29 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up llvm-mingw
+      run: |
+        wget https://github.com/mstorsjo/llvm-mingw/releases/download/20250417/llvm-mingw-20250417-ucrt-ubuntu-22.04-x86_64.tar.xz
+        tar -xf llvm-mingw-20250417-ucrt-ubuntu-22.04-x86_64.tar.xz
+        mv llvm-mingw-*/ llvm-mingw
+        echo "$GITHUB_WORKSPACE/llvm-mingw/bin" >> $GITHUB_PATH
+
+    - name: Build EXE
+      run: |
+        x86_64-w64-windows-gnu-clang vbmeta-disable-verify.c -o vbmeta-disable-verify.exe
+
+    - name: Upload EXE
+      uses: actions/upload-artifact@v3
+      with:
+        name: vbmeta-disable-verify
+        path: vbmeta-disable-verify.exe
