@@ -1,4 +1,4 @@
-name: Build Windows EXE (No External Actions)
+name: Build Windows EXE (No Actions)
 
 on:
   workflow_dispatch:
@@ -8,19 +8,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Clone Repo and Build EXE
+    - name: Clone, Install Toolchain, and Build
       run: |
-        # Clone repo manually since we can't use actions/checkout
-        git clone $GITHUB_SERVER_URL/$GITHUB_REPOSITORY repo
+        # Clone source manually
+        git clone "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" repo
         cd repo
 
-        # Download and extract latest llvm-mingw toolchain
+        # Download and extract llvm-mingw
         wget https://github.com/mstorsjo/llvm-mingw/releases/download/20250417/llvm-mingw-20250417-ucrt-ubuntu-22.04-x86_64.tar.xz
         tar -xf llvm-mingw-20250417-ucrt-ubuntu-22.04-x86_64.tar.xz
-        mv llvm-mingw-20250417-ucrt-ubuntu-22.04-x86_64 llvm-mingw
-        export PATH="$PWD/llvm-mingw/bin:$PATH"
 
-        # Build the EXE
+        # Move and prepare path
+        mv llvm-mingw-20250417-ucrt-ubuntu-22.04-x86_64 llvm-mingw
+        export TOOLCHAIN_DIR="$PWD/llvm-mingw/bin"
+        export PATH="$TOOLCHAIN_DIR:$PATH"
+
+        # Debug: check compiler exists
+        ls -l "$TOOLCHAIN_DIR/x86_64-w64-windows-gnu-clang"
+        which x86_64-w64-windows-gnu-clang
+
+        # Build the executable
         x86_64-w64-windows-gnu-clang vbmeta-disable-verify.c -o vbmeta-disable-verify.exe
 
         # Confirm output
