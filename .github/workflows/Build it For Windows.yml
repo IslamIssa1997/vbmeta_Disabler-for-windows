@@ -11,18 +11,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up llvm-mingw
+    - name: Download latest llvm-mingw (20250417)
       run: |
         wget https://github.com/mstorsjo/llvm-mingw/releases/download/20250417/llvm-mingw-20250417-ucrt-ubuntu-22.04-x86_64.tar.xz
         tar -xf llvm-mingw-20250417-ucrt-ubuntu-22.04-x86_64.tar.xz
-        mv llvm-mingw-*/ llvm-mingw
+        mv llvm-mingw-20250417-ucrt-ubuntu-22.04-x86_64 llvm-mingw
         echo "$GITHUB_WORKSPACE/llvm-mingw/bin" >> $GITHUB_PATH
 
-    - name: Build EXE
+    - name: Build Windows EXE
       run: |
         x86_64-w64-windows-gnu-clang vbmeta-disable-verify.c -o vbmeta-disable-verify.exe
 
-    - name: Upload EXE
+    - name: Upload EXE artifact
       uses: actions/upload-artifact@v3
       with:
         name: vbmeta-disable-verify
