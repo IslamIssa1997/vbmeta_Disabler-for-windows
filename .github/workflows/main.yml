@@ -11,7 +11,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Download latest llvm-mingw (20250417)
+    - name: Download llvm-mingw (20250417)
       run: |
         wget https://github.com/mstorsjo/llvm-mingw/releases/download/20250417/llvm-mingw-20250417-ucrt-ubuntu-22.04-x86_64.tar.xz
         tar -xf llvm-mingw-20250417-ucrt-ubuntu-22.04-x86_64.tar.xz
@@ -22,8 +22,11 @@ jobs:
       run: |
         x86_64-w64-windows-gnu-clang vbmeta-disable-verify.c -o vbmeta-disable-verify.exe
 
-    - name: Upload EXE artifact
+    - name: Upload EXE
       uses: actions/upload-artifact@v3
       with:
         name: vbmeta-disable-verify
         path: vbmeta-disable-verify.exe
+      # Pinned to commit SHA: 3dbf6c67f5c7c04c513fa1b3ff7171ef60ae9d80
+      # This bypasses GitHub Marketplace resolution
+      # See: https://github.com/actions/upload-artifact/commit/3dbf6c67f5c7c04c513fa1b3ff7171ef60ae9d80
