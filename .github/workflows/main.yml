@@ -23,12 +23,16 @@ jobs:
         export TOOLCHAIN_DIR="$PWD/llvm-mingw/bin"
         export PATH="$TOOLCHAIN_DIR:$PATH"
 
-        # Debug: check compiler exists
-        ls -l "$TOOLCHAIN_DIR/x86_64-w64-windows-gnu-clang"
-        which x86_64-w64-windows-gnu-clang
+        # Debug: list actual toolchain binaries
+        echo "Toolchain contents:"
+        ls -lh "$TOOLCHAIN_DIR"
 
-        # Build the executable
-        x86_64-w64-windows-gnu-clang vbmeta-disable-verify.c -o vbmeta-disable-verify.exe
+        # List compiler location
+        which x86_64-w64-windows-gnu-clang || true
+        which clang || true
+
+        # Build the executable (assuming clang is found)
+        clang vbmeta-disable-verify.c -o vbmeta-disable-verify.exe
 
         # Confirm output
         ls -lh vbmeta-disable-verify.exe
