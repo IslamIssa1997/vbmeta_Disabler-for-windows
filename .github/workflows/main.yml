@@ -1,4 +1,4 @@
-name: Build Windows EXE
+name: Build Windows EXE (No Actions Used)
 
 on:
   workflow_dispatch:
@@ -8,10 +8,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@3d9f75e540eb420dd2b927fa6d527a7c9d1cfa3a # checkout@v3.5.3
+    - name: Clone Repo
+      run: |
+        git clone $GITHUB_SERVER_URL/$GITHUB_REPOSITORY repo
+        cd repo
+        cp vbmeta-disable-verify.c ../
+        cd ..
 
-    - name: Download llvm-mingw (20250417)
+    - name: Download llvm-mingw
       run: |
         wget https://github.com/mstorsjo/llvm-mingw/releases/download/20250417/llvm-mingw-20250417-ucrt-ubuntu-22.04-x86_64.tar.xz
         tar -xf llvm-mingw-20250417-ucrt-ubuntu-22.04-x86_64.tar.xz
@@ -22,8 +26,5 @@ jobs:
       run: |
         x86_64-w64-windows-gnu-clang vbmeta-disable-verify.c -o vbmeta-disable-verify.exe
 
-    - name: Upload EXE
-      uses: actions/upload-artifact@3dbf6c67f5c7c04c513fa1b3ff7171ef60ae9d80 # upload-artifact@v3.1.3
-      with:
-        name: vbmeta-disable-verify
-        path: vbmeta-disable-verify.exe
+    - name: Display Build Result
+      run: ls -lh vbmeta-disable-verify.exe
